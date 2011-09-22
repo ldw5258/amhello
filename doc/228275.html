@@ -1,0 +1,360 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" dir="ltr" lang="zh-CN"><head>
+    <title>从0走到1</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=GB2312">
+    <meta name="generator" content="plog-1.0.1_r2073">
+    <meta http-equiv="Content-Language" content="zh-CN">
+    
+    <link rel="stylesheet" title="default" type="text/css" media="screen" href="228275_files/style.css">
+    <link rel="alternate" type="text/xml" title="RSS 2.0" href="http://lyanry.itpub.net/rss/rss20/20767">
+    <link rel="alternate" type="text/xml" title="RSS 1.0" href="http://lyanry.itpub.net/rss/rss10/20767">
+    <link rel="alternate" type="text/xml" title="RSS 0.90" href="http://lyanry.itpub.net/rss/rss090/20767">
+    <link rel="alternate" type="application/atom+xml" title="Atom 0.3" href="http://lyanry.itpub.net/rss/atom/20767">
+</head>
+
+<body>
+<div id="rap">
+    <h1 id="header"><a href="http://lyanry.itpub.net/" title="从0走到1">从0走到1</a></h1>
+
+
+<div id="content">
+            <h2>10 11, 2006</h2>
+    
+    <div class="post">
+        
+<h3 class="storytitle"><a href="http://lyanry.itpub.net/post/20767/228275">Autoconf学习笔记(1)</a></h3>
+
+<div class="meta">
+
+   
+    <a href="http://lyanry.itpub.net/category/20767/33849" title="一般分类">
+		   一般分类</a>  
+ — 作者 lyanry @ 13:42
+</div>
+<div class="storycontent">
+    <p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">抽出了一点时间，学习了一点Autoconf，记之。</p><br><table style=""><tbody><tr><td style="background-color: rgb(204, 204, 204); color: rgb(170, 80, 80); font-weight: bold; font-size: 14px;"><a name="1"></a>Autoconf是什么？</td></tr><tr><td> <p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">一
+位物理学家、一位工程师和一位计算机科学家，三个人在讨论上帝是个什么样的人。物理学家说：“它老人家肯定是物理学家，因为在创世之初，上帝制造了光；你
+们是知道的，麦克斯韦方程，电磁波的波粒二相性，相对论……“。工程师不干了：“它老人家肯定是一位工程师，因为在创造光之前，它把混沌分成了陆地和水；
+开展了一项浩大的工程来处理泥浆，并从液体中分离出固体……“这时，只听得计算机科学家大吼：“呔！你所谓的‘混沌’是从哪里来的呢，呀？”</p> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">实
+际上，如果你从事跨平台软件开发工作，你就会发现不同系统之间存在众多微妙或巨大的差异，这使得程序顺利地通过编译困难重重，因为不同的系统仅接受适合自
+身的程序代码。而要向不同的系统提供相应的程序代码，是很难实现的事情，因此POSIX出现了，它好像一个理想中的系统，程序员们为该系统编程，然后使用
+一个工具伪装为履行POSIX标准的用户机器，这样就能保证最终的源代码可以在不同平台（符合POSIX标准的）上编译。这个工具，就是Autoconf
+（即本文开头那个计算机科学家所谓的‘混沌’）。</p> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">Autoconf
+的任务就是帮助软件开发人员研究用户所用的系统，分析其是否符合POSIX标准，并提供相应解决方法。显然，要检测用户的机器，就需要运行一个检查器。因
+为这个检查器的任务是去发现系统缺陷的，所以它必须具备绝对的跨平台运行能力。Bourne
+shell是最合适的一种语言，可以用它来写configure作为检查器。不过，Bourne
+shell不具备函数编程功能，用它来写较为复杂的检查器，就像用汇编语言编程一样困难。这样，类似于高级语言及其编译器被发明出来取代汇编语言那样，
+David J.MacKenzie发明了Autoconf语言及autoconf程序来替代普通的用Bourne shell写的检查器程序了。</p> 
+<p style="rgb(170, 80, 80); text-align: right; font-size: 12px;">－－－－李延瑞（lyanry@gmail.com）译于 2006年10月16日</p> 
+</td></tr></tbody></table> 
+<table style=""><tbody><tr><td style="background-color: rgb(204, 204, 204); color: rgb(170, 80, 80); font-weight: bold; font-size: 14px;"><a name="2"></a>Autoconf初步(1)</td></tr><tr><td> <p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">Autoconf
+仅仅是一个基于M4开发的库，提供了一套宏语言，用于检测库、程序等是否存在。因为M4过于低等且Autoconf目的在于生成Bourne
+shell脚本，因此其高于M4。将Autoconf代码扩展为Bourne shell脚本很简单，可以使用“autom4te
+--language=autoconf“，也可以直接使用”autoconf“命令。</p> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">所有Autoconf脚本都要由AC_INIT宏开始：</p> 
+
+<div style="1px solid rgb(238, 238, 238); padding: 8px; overflow: auto; font-size: 12px; color: rgb(0, 51, 102); background-color: rgb(238, 238, 238);"><blockquote><p style="font-weight: bold; color: rgb(153, 153, 153); font-size: 12px; text-align: justify;">[code1]AC_INIT宏</p> 
+<pre>AC_INIT(package, version, [bug-report-address])</pre></blockquote></div> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">AC_INIT的参数列表中，package为预编译的软件包名，version表示其版本号。bug-report-address是可选参数，它通常是一个Email地址，用于用户向该Email地址发送bug报告。</p> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">下面是一份最简单的Autoconf脚本：</p> 
+<div style="1px solid rgb(238, 238, 238); padding: 8px; overflow: auto; font-size: 12px; color: rgb(0, 51, 102); background-color: rgb(238, 238, 238);"><blockquote><p style="font-weight: bold; color: rgb(153, 153, 153); font-size: 12px; text-align: justify;">[code2]auditor.ac</p> 
+<pre>AC_INIT(Auditor, 1.0)</pre></blockquote></div> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">下面使用autoconf工具，将auditor.ac脚本转换为Bourne shell脚本：</p> 
+<div style="1px solid rgb(238, 238, 238); padding: 8px; overflow: auto; font-size: 12px; color: rgb(0, 51, 102); background-color: rgb(238, 238, 238);"><blockquote><p style="font-weight: bold; color: rgb(153, 153, 153); font-size: 12px; text-align: justify;">[code3]Autoconf脚本的转换与使用</p> 
+<pre>$ autom4te -l autoconf -o auditor auditor.ac #或autoconf -o auditor auditor.ac<br>$ ./auditor #在shell中执行生成的auditor脚本<br>$ ./auditor --version<br>Auditor configure 1.0<br>generated by GNU Autoconf 2.59<br><br>Copyright (C) 2003 Free Software Foundation, Inc.<br>This configure script is free software; the Free Software Foundation<br>gives unlimited permission to copy, distribute and modify it.</pre></blockquote></div> 
+
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">许多软件是用C语言开发的，因此需要C编译器；AC_PROG_CC可以检测系统中是否存在C编译器。下面将auditor.ac修改为：</p> 
+<div style="1px solid rgb(238, 238, 238); padding: 8px; overflow: auto; font-size: 12px; color: rgb(0, 51, 102); background-color: rgb(238, 238, 238);"><blockquote><p style="font-weight: bold; color: rgb(153, 153, 153); font-size: 12px; text-align: justify;">[code4]auditor.ac</p> 
+<pre>AC_INIT(Auditor, 1.0)<br>AC_PROG_CC</pre></blockquote></div> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">将修改后的auditor.ac转换为Boune shell脚本后并执行，如下：</p> 
+<div style="1px solid rgb(238, 238, 238); padding: 8px; overflow: auto; font-size: 12px; color: rgb(0, 51, 102); background-color: rgb(238, 238, 238);"><blockquote><p style="font-weight: bold; color: rgb(153, 153, 153); font-size: 12px; text-align: justify;">[code5]auditor.ac</p> 
+<pre>autoconf -o auditor auditor.ac<br>$ ./auditor<br>checking for gcc... gcc<br>checking for C compiler default output file name... a.out<br>checking whether the C compiler works... yes<br>checking whether we are cross compiling... no<br>checking for suffix of executables...<br>checking for suffix of object files... o<br>checking whether we are using the GNU C compiler... yes<br>checking whether gcc accepts -g... yes<br>checking for gcc option to accept ANSI C... none needed</pre></blockquote></div> 
+
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">如
+何对AC_PROG_CC的运行结果加以利用呢？在Autoconf的工作流程中，AC_PROG_CC总是在Autoconf基于一些模板文件生成新文
+件之前运行。譬如，一旦对你的系统完成了全面检查，Autoconf会根据对系统的检查结果将所有的'Makefile.in’模板转化为
+‘Makefile‘文件。这个过程叫做软件包的‘configuring‘，传统的做法是由Autoconf根据‘configure.ac‘生成
+configure脚本来实现的。</p> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">未完，待续 ……</p> 
+<p style="rgb(170, 80, 80); text-align: right; font-size: 12px;">－－－－李延瑞（lyanry@gmail.com）译于 2006年10月17日</p> 
+</td></tr></tbody></table> 
+<table style=""><tbody><tr><td style="background-color: rgb(204, 204, 204); color: rgb(170, 80, 80); font-weight: bold; font-size: 14px;"><a name="3"></a>Autoconf初步(2)</td></tr><tr><td> <p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">书接上回。</p> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">将auditor脚本变为系统编译环境配置脚本仅需要两个宏调用：</p> 
+<div style="1px solid rgb(238, 238, 238); padding: 8px; overflow: auto; font-size: 12px; color: rgb(0, 51, 102); background-color: rgb(238, 238, 238);"><blockquote><p style="font-weight: bold; color: rgb(153, 153, 153); font-size: 12px; text-align: justify;">[code1]AC_CONFIG_FILES宏</p> 
+<pre>AC_CONFIG_FILES(file……, [command])</pre></blockquote></div> 
+
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">‘file’
+参数指要创建的文件，该文件复制于一份输入文件（默认为‘file.in’），并替换掉输出变量值。‘file’就是一份输出文件，称之为系统编译环境配
+置文件更准确一些。譬如，若‘FOO’是一个输出变量，而它的值为‘Bar’，那么在文件‘file.in’中出现的所有‘@FOO@’，在输出文件中都
+会被替换为‘Bar’。</p> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">可选参数‘command’表示如果有必要，一旦文件创建完毕，也可以运行一些shell命令的。</p> 
+<div style="1px solid rgb(238, 238, 238); padding: 8px; overflow: auto; font-size: 12px; color: rgb(0, 51, 102); background-color: rgb(238, 238, 238);"><blockquote><p style="font-weight: bold; color: rgb(153, 153, 153); font-size: 12px; text-align: justify;">[code2]AC_OUTPUT</p> 
+<pre>AC_OUTPUT</pre></blockquote></div> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">这个宏用于完成所有输出（创建系统编译环境配置文件，输出头文件等等）。</p> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">下面对这两个宏的应用作简单演示：</p> 
+<div style="1px solid rgb(238, 238, 238); padding: 8px; overflow: auto; font-size: 12px; color: rgb(0, 51, 102); background-color: rgb(238, 238, 238);"><blockquote><p style="font-weight: bold; color: rgb(153, 153, 153); font-size: 12px; text-align: justify;">[code3]输入文件which-cc.in</p> 
+<pre>#! @SHELL@<br>echo "cc is @CC@"</pre></blockquote></div> 
+
+<div style="1px solid rgb(238, 238, 238); padding: 8px; overflow: auto; font-size: 12px; color: rgb(0, 51, 102); background-color: rgb(238, 238, 238);"><blockquote><p style="font-weight: bold; color: rgb(153, 153, 153); font-size: 12px; text-align: justify;">[code4]Autoconf configure</p> 
+<pre>AC_INIT(Sample, 1.0)<br>AC_PROG_CC<br>AC_CONFIG_FILE([which-cc],[chmod +x which-cc<br>AC_OUTPUT</pre></blockquote></div> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">configure脚本生成及其运行结果如下：</p> 
+<div style="1px solid rgb(238, 238, 238); padding: 8px; overflow: auto; font-size: 12px; color: rgb(0, 51, 102); background-color: rgb(238, 238, 238);"><blockquote><p style="font-weight: bold; color: rgb(153, 153, 153); font-size: 12px; text-align: justify;">[code5]configure脚本生成及其运行结果</p> 
+<pre>[$ autoconf<br>$ ls<br>autom4te.cache configure configure.ac configure.ac~ which-cc.in<br>$ ./configure<br>checking for gcc... gcc<br>checking for C compiler default output file name... a.out<br>checking whether the C compiler works... yes<br>checking whether we are cross compiling... no<br>checking for suffix of executables...<br>checking for suffix of object files... o<br>checking whether we are using the GNU C compiler... yes<br>checking whether gcc accepts -g... yes<br>checking for gcc option to accept ANSI C... none needed<br>configure: creating ./config.status<br>config.status: creating which-cc<br>$ cat which-cc<br>#! /bin/sh<br>echo "cc is gcc"</pre></blockquote></div> 
+
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">可能你会纳闷configure脚本运行时生成了一个config.status文件，这是个什么东东呢？事实上，configure仅仅是一个检查器：它本身不执行任何配置行为，它所创建的config.status会进行配置工作。</p> 
+<p style="rgb(170, 80, 80); text-align: right; font-size: 12px;">－－－－李延瑞（lyanry@gmail.com）译于 2006年10月18日</p> 
+</td></tr></tbody></table> 
+<table style=""><tbody><tr><td style="background-color: rgb(204, 204, 204); color: rgb(170, 80, 80); font-weight: bold; font-size: 14px;"><a name="4"></a>Autoconf初步(3)</td></tr><tr><td> <p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">书接上回。</p> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">对configure.ac脚本的处理，输出的不仅仅有系统编译环境配置文件，也可以向C程序提供检查结果，表现为输出头文件，其所提供的信息通常是简单的宏定义列表。</p> 
+<div style="1px solid rgb(238, 238, 238); padding: 8px; overflow: auto; font-size: 12px; color: rgb(0, 51, 102); background-color: rgb(238, 238, 238);"><blockquote><p style="font-weight: bold; color: rgb(153, 153, 153); font-size: 12px; text-align: justify;">[code1]AC_CONFIG_HEADERS</p> 
+<pre>AC_CONFIG_HEADERS(file……, [command])</pre></blockquote></div> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">和
+配置脚本文件的输出一样，输出的头文件也要从一份模板文件中复制内容，这份模板文件中定义了CPP输出符号。对于输出的头文件，比较传统的命名是
+config.h，其模板文件名模认为config.h.in。对于一些操作系统，可能模板文件名中两个句点的文件命名方式不被支持，可以采用
+config.hin或config_h.in来代替，然后在AC_CONFIG_HEADERS标明config.h与该模板文件的依赖关系即可，如：
+AC_CONFIG_HEADERS)(config.h:config.hin)。</p> 
+
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">AC_CONFIG_HEADERS中的命令行参数表示如果有必要，可以调用一些shell命令。</p> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">通常在‘configure.ac’中对软件包的名称和版本作出声明，虽然如此，还需要为软件包的命令行选项‘--help‘提供有关软件包名称及版本号确切的应答，主程序就必须知道当前软件包的名称及其版本号，这个可以由配置脚本生成config.h文件来实现：</p> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">为生成这样的头文件，对上回书中的configure.ac文件再度修改，如下：</p> 
+<div style="1px solid rgb(238, 238, 238); padding: 8px; overflow: auto; font-size: 12px; color: rgb(0, 51, 102); background-color: rgb(238, 238, 238);"><blockquote><p style="font-weight: bold; color: rgb(153, 153, 153); font-size: 12px; text-align: justify;">[code2]configure.ac</p> 
+<pre>AC_INIT(Audit, 1.1, lyanry@gmail.com)<br>AC_CONFIG_HEADERS(config.h)<br>AC_OUTPUT</pre></blockquote></div> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">下面是config.h文件的模板config.h.in:</p> 
+<div style="1px solid rgb(238, 238, 238); padding: 8px; overflow: auto; font-size: 12px; color: rgb(0, 51, 102); background-color: rgb(238, 238, 238);"><blockquote><p style="font-weight: bold; color: rgb(153, 153, 153); font-size: 12px; text-align: justify;">[code3]config.h.in</p> 
+<pre>/*定义bug报告发送地址*/<br>#undef PACKAGE_BUGREPORT<br>/*定义软件包全名*/<br>#undef PACKAGE_NAME<br>/*定义该软件包全名及其版本号*/<br>#undef PACKAGE_STRING<br>/*定义软件包短名称*/<br>#undef PACKAGE_TARNAME<br>/*定义软件包版本号*/<br>#undef PACKAGE_VERSION</pre></blockquote></div> 
+
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">下面对configure.ac进行处理，生成configure脚本，运行configure脚本即可生成config.h文件：</p> 
+<div style="1px solid rgb(238, 238, 238); padding: 8px; overflow: auto; font-size: 12px; color: rgb(0, 51, 102); background-color: rgb(238, 238, 238);"><blockquote><p style="font-weight: bold; color: rgb(153, 153, 153); font-size: 12px; text-align: justify;">[code4]生从configure及其运行结果</p> 
+<pre>]$ autoconf<br>[lyanry@lyanry sample]$ ./configure<br>configure: creating ./config.status<br>config.status: creating config.h<br>[lyanry@lyanry sample]$ cat config.h<br>/* config.h. Generated by configure. */<br>/*定义bug报告发送地址*/<br>#define PACKAGE_BUGREPORT "lyanry@gmail.com"<br>/*定义软件包全名*/<br>#define PACKAGE_NAME "Sample"<br>/*定义该软件包全名及其版本号*/<br>#define PACKAGE_STRING "Sample 1.0"<br>/*定义软件包短名称*/<br>#define PACKAGE_TARNAME "sample"<br>/*定义软件包版本号*/<br>#define PACKAGE_VERSION "1.0"</pre></blockquote></div> 
+
+<p style="rgb(170, 80, 80); text-align: right; font-size: 12px;">－－－－李延瑞（lyanry@gmail.com）译于 2006年10月19日</p> 
+</td></tr></tbody></table> 
+<table style=""><tbody><tr><td style="background-color: rgb(204, 204, 204); color: rgb(170, 80, 80); font-weight: bold; font-size: 14px;"><a name="5"></a>Autoconf初步(4)</td></tr><tr><td> <p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">书接上回。</p> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">上
+一节，编译环境配置头文件模板config.h.in文件是手动编辑的，实际上它可以很容易地由‘configure.ac’文件导出，这通过检索所有已
+定义的预处理符号，并在其前冠以‘#undef’，然后再自动粘贴相应的标准注释，最后输出‘config.h.in’。用于完成这一过程的工具是
+autoheader:</p> 
+<div style="1px solid rgb(238, 238, 238); padding: 8px; overflow: auto; font-size: 12px; color: rgb(0, 51, 102); background-color: rgb(238, 238, 238);"><blockquote><p style="font-weight: bold; color: rgb(153, 153, 153); font-size: 12px; text-align: justify;">[code1]autoheader用法</p> 
+<pre>$ rm config.h.in<br>$ autoheader<br>$ cat config.h.in<br>/* config.h.in. Generated from configure.ac by autoheader. */<br><br>/* Define to the address where bug reports for this package should be sent. */<br>#undef PACKAGE_BUGREPORT<br><br>/* Define to the full name of this package. */<br>#undef PACKAGE_NAME<br><br>/* Define to the full name and version of this package. */<br>#undef PACKAGE_STRING<br><br>/* Define to the one symbol short name of this package. */<br>#undef PACKAGE_TARNAME<br><br>/* Define to the version of this package. */<br>#undef PACKAGE_VERSION</pre></blockquote></div> 
+
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">本
+文虽然在讲述Autoconf的初步应用，但依然需要运行两个程序，它们必须按次序运行？（并非如此）。我要在什么时机运行它们？（事实上，每次
+'configure.ac'或其依赖文件发生更改之时都要运行这两个程序）。还有没有其他程序也像这样？（当然，automake，
+libtoolize，gettextize，aclocal……都这般运行）它们的运行次序是否也任意？（是的，本质上皆如此）。</p> 
+<p style="text-indent: 2em; color: rgb(102, 102, 102); font-size: 12px; text-align: justify;">实际上，本文与其是讲Autoconf的初步使用，不如说是讲述autoreconf的初步使用：后者囊括了Autoconf中的各类工具，知道在什么情况下运行相应程序。我鼓励你忘掉autoconf、automake等工具，仅使用autoreconf即可，如下：</p> 
+<div style="1px solid rgb(238, 238, 238); padding: 8px; overflow: auto; font-size: 12px; color: rgb(0, 51, 102); background-color: rgb(238, 238, 238);"><blockquote><p style="font-weight: bold; color: rgb(153, 153, 153); font-size: 12px; text-align: justify;">[code2]autoreconf用法</p> 
+<pre>[lyanry@lyanry sample]$ ls<br>configure.ac<br>[lyanry@lyanry sample]$ autoreconf<br>[lyanry@lyanry sample]$ ls<br>autom4te.cache config.h.in configure configure.ac</pre></blockquote></div> 
+<p style="rgb(170, 80, 80); text-align: right; font-size: 12px;">－－－－李延瑞（lyanry@gmail.com）译于 2006年10月22日</p> 
+</td></tr></tbody></table> 
+    <br style="clear: both;">
+ </div>
+<div class="feedback">
+    <a href="http://lyanry.itpub.net/post/20767/228275#comments" title="评论">
+        3 最新回复    </a> |
+		  0 引用
+	</div>    
+    
+        <h2 id="comments">最新回复</h2>
+        
+         <ol id="commentlist">
+                            <li id="comment-35253457">
+                <p></p><p>I want to continue the work when getting any spare time.</p>
+<p></p>
+               
+               	<p><cite>作者
+                                       noname
+                    —
+                                      18 01 2009, 18:16
+                </cite></p>
+            </li>
+                            <li id="comment-9122417">
+                <p></p><p>原来是翻译info文档的，怎么不继续翻译呢？</p>
+<p></p>
+               
+               	<p><cite>作者
+                                       beer
+                    —
+                                      01 08 2007, 17:17
+                </cite></p>
+            </li>
+                            <li id="comment-9062541">
+                <p></p><p>非常好的文章。</p>
+<p></p>
+               
+               	<p><cite>作者
+                                       beer
+                    —
+                                      30 07 2007, 17:20
+                </cite></p>
+            </li>
+            
+        </ol>
+            
+                    <br style="clear: both;">
+           <h2>发表评论</h2>
+          <form id="commentform" name="comments_form" action="http://lyanry.itpub.net/index.php" method="post">
+  <input name="op" value="AddComment" type="hidden">
+  <input name="articleId" value="228275" type="hidden">
+  <input name="blogId" value="20767" type="hidden">
+  <input name="parentId" value="" type="hidden">
+  <p>
+	<input tabindex="2" id="author" name="userName">
+	<label for="author">称呼</label>
+    </p>
+    <p>
+	<input tabindex="3" id="email" name="userEmail">
+	<label for="email">邮箱地址（可选）</label>
+    </p>
+    <p>
+	<input tabindex="4" id="url" name="userUrl">
+	<label for="url">个人主页（可选）</label>
+    </p>
+  <p>
+    <label for="commentText">发表评论</label><br>
+    
+    <textarea tabindex="5" id="text" name="commentText" rows="10" cols="50"></textarea><br><br>
+<br>
+    <input style="font-weight: bold;" name="post" value="&nbsp;发表&nbsp;" type="submit"><br><br>
+  </p>
+</form>
+            </div>
+</div>
+
+
+<div id="menu">
+<ul>
+    <li id="search">搜索
+	   <form name="search_form" method="post" action="http://lyanry.itpub.net/index.php">
+	      <input name="searchTerms" size="14" type="text"><br>
+		  <input name="op" value="Search" type="hidden">
+		  <input name="blogId" value="20767" type="hidden">
+   </form>
+    </li>
+
+    <li id="wordpress">新闻聚合
+    <ul>
+     <li><a href="http://lyanry.itpub.net/album/20767/0">资源中心</a></li>
+    </ul> 
+    </li>
+
+ <li id="categories">
+  文章分类
+  <ul>
+       <li><a href="http://lyanry.itpub.net/category/20767/33849">一般分类 [1]</a></li>
+      </ul>
+ </li>
+  
+ <li id="archives">
+  文章归档
+  <ul>
+     <li><a href="http://lyanry.itpub.net/archives/20767/200611">十一月 2006</a></li>
+    </ul>
+  </li>
+  <li id="calendar">
+	<table class="calMonth">
+<thead>
+<tr class="calMonthNav">
+	<th class="calMonthBackward"><a href="http://lyanry.itpub.net/archives/20767/201108" title="八月 2011">&#171;</a></th>
+	<th class="calMonthCurrent" colspan="5">九月 2011</th>
+	<th class="calMonthForward"><a href="http://lyanry.itpub.net/archives/20767/201110" title="十月 2011">&#187;</a></th>
+</tr>
+<tr class="calMonthHeader">
+	<th scope="col" abbr="星期一">一</th>
+	<th scope="col" abbr="星期二">二</th>
+	<th scope="col" abbr="星期三">三</th>
+	<th scope="col" abbr="星期四">四</th>
+	<th scope="col" abbr="星期五">五</th>
+	<th scope="col" abbr="星期六">六</th>
+	<th scope="col" abbr="星期日">日</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+	<td class="calMonthDay">&nbsp;</td>
+	<td class="calMonthDay">&nbsp;</td>
+	<td class="calMonthDay">&nbsp;</td>
+	<td class="calMonthDay">1</td>
+	<td class="calMonthDay">2</td>
+	<td class="calMonthDay">3</td>
+	<td class="calMonthDay">4</td>
+</tr>
+<tr>
+	<td class="calMonthDay">5</td>
+	<td class="calMonthDay">6</td>
+	<td class="calMonthDay">7</td>
+	<td class="calMonthDay">8</td>
+	<td class="calMonthDay">9</td>
+	<td class="calMonthDay">10</td>
+	<td class="calMonthDay">11</td>
+</tr>
+<tr>
+	<td class="calMonthDay">12</td>
+	<td class="calMonthDay">13</td>
+	<td class="calMonthDay">14</td>
+	<td class="calMonthDay">15</td>
+	<td class="calMonthDay">16</td>
+	<td class="calMonthToday">17</td>
+	<td class="calMonthDay">18</td>
+</tr>
+<tr>
+	<td class="calMonthDay">19</td>
+	<td class="calMonthDay">20</td>
+	<td class="calMonthDay">21</td>
+	<td class="calMonthDay">22</td>
+	<td class="calMonthDay">23</td>
+	<td class="calMonthDay">24</td>
+	<td class="calMonthDay">25</td>
+</tr>
+<tr>
+	<td class="calMonthDay">26</td>
+	<td class="calMonthDay">27</td>
+	<td class="calMonthDay">28</td>
+	<td class="calMonthDay">29</td>
+	<td class="calMonthDay">30</td>
+	<td class="calMonthDay">&nbsp;</td>
+	<td class="calMonthDay">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+
+  </li>
+
+    <li id="meta">
+    Meta
+    <ul>
+     <li><a title="Link to the RSS 0.90 feed." href="http://lyanry.itpub.net/rss/rss090/20767">RSS 0.90</a></li>
+     <li><a title="Link to the RSS 1.0 feed." href="http://lyanry.itpub.net/rss/rss10/20767">RSS 1.0</a></li>
+     <li><a title="Link to the RSS 2.0 feed." href="http://lyanry.itpub.net/rss/rss20/20767">RSS 2.0</a></li>
+     <li><a title="Link to the Atom 0.3 feed." href="http://lyanry.itpub.net/rss/atom/20767">Atom 0.3</a></li>
+     <li><a href="http://validator.w3.org/check/referer" title="Valid XHTML 1.0 Transitional">Valid <abbr title="eXtensible HyperText Markup Language">XHTML</abbr></a></li>
+     
+    </ul> 
+    </li>
+
+  <li id="style"> 
+  网站链接
+  <ul>
+     
+   </ul>
+    </li>
+</ul> 
+</div>    </div>
+    <p class="credit">
+        Powered by <a href="http://www.plogworld.net/" target="_blank">pLog</a>
+    </p>
+    
+<script language="javascript" src="228275_files/pv.js"></script>
+<script> 
+function sendPV(){
+    var pvTrack = new PvTrack();
+    pvTrack.type = 11; // ?μààID
+    pvTrack.channel =23; // ?μàD
+    pvTrack.pageType = 0;
+    pvTrack.track();
+}
+window.setTimeout("sendPV()", 3);
+</script>
+
+</body></html>

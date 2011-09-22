@@ -32,7 +32,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = helloworld$(EXEEXT)
+bin_PROGRAMS = helloworld$(EXEEXT) gtkhello$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -45,9 +45,14 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
+am_gtkhello_OBJECTS = gtkhello.$(OBJEXT)
+gtkhello_OBJECTS = $(am_gtkhello_OBJECTS)
+gtkhello_LDADD = $(LDADD)
+gtkhello_DEPENDENCIES =
 am_helloworld_OBJECTS = main.$(OBJEXT)
 helloworld_OBJECTS = $(am_helloworld_OBJECTS)
 helloworld_LDADD = $(LDADD)
+helloworld_DEPENDENCIES =
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -56,8 +61,8 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(helloworld_SOURCES)
-DIST_SOURCES = $(helloworld_SOURCES)
+SOURCES = $(gtkhello_SOURCES) $(helloworld_SOURCES)
+DIST_SOURCES = $(gtkhello_SOURCES) $(helloworld_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -78,6 +83,8 @@ ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EXEEXT = @EXEEXT@
+GTK_CFLAGS = @GTK_CFLAGS@
+GTK_LIBS = @GTK_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -98,6 +105,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PKG_CONFIG = @PKG_CONFIG@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -145,6 +153,9 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 helloworld_SOURCES = main.c
+gtkhello_SOURCES = gtkhello.c
+AM_CPPFLAGS = @GTK_CFLAGS@
+LDADD = @GTK_LIBS@
 all: all-am
 
 .SUFFIXES:
@@ -216,6 +227,9 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+gtkhello$(EXEEXT): $(gtkhello_OBJECTS) $(gtkhello_DEPENDENCIES) 
+	@rm -f gtkhello$(EXEEXT)
+	$(LINK) $(gtkhello_OBJECTS) $(gtkhello_LDADD) $(LIBS)
 helloworld$(EXEEXT): $(helloworld_OBJECTS) $(helloworld_DEPENDENCIES) 
 	@rm -f helloworld$(EXEEXT)
 	$(LINK) $(helloworld_OBJECTS) $(helloworld_LDADD) $(LIBS)
@@ -226,6 +240,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtkhello.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 
 .c.o:
